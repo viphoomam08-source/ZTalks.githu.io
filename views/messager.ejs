@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger Component with Security Lock</title>
+    <!-- FontAwesome សម្រាប់ Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+    /* ==========================================================================
+       1. MESSENGER CONTAINER STYLE
+       ========================================================================== */
+    .custom-messenger-container {
+        background: #ffffff;
+        color: #1E293B;
+        width: 100%;
+        max-width: 450px; /* កំណត់ទំហំឱ្យសមរម្យដូចក្នុងរូបភាព */
+        margin: 20px auto;
+        height: 650px; 
+        display: flex;
+        flex-direction: column;
+        border-radius: 16px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+    }
+
+    /* Header & Search Zone */
+    .msgr-top-nav {
+        padding: 24px 24px 16px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid #E2E8F0;
+        flex-shrink: 0;
+    }
+
+    .msgr-brand-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .msgr-logo {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #4F46E5;
+    }
+
+    .msgr-header-tools {
+        display: flex;
+        gap: 12px;
+    }
+
+    .msgr-tool-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background-color: #F1F5F9;
+        border: 1px solid #E2E8F0;
+        color: #64748B;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .msgr-tool-btn:hover {
+        color: #4F46E5;
+        background-color: #EEF2F6;
+    }
+
+    /* Search Box */
+    .msgr-search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        color: #94A3B8;
+        font-size: 14px;
+    }
+
+    .msgr-search-field {
+        width: 100%;
+        padding: 12px 16px 12px 46px;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        background-color: #F8FAFC;
+        color: #0F172A;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .msgr-search-field:focus {
+        border-color: #4F46E5;
+        background-color: #ffffff;
+    }
+
+    /* Main Scrollable Content */
+    .msgr-main-content-scrollable {
+        flex: 1;
+        overflow-y: auto;
+        scrollbar-width: none; 
+        -ms-overflow-style: none; 
+    }
+
+    .msgr-main-content-scrollable::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Stories Area */
+    .msgr-stories-container {
+        padding: 20px 24px;
+        border-bottom: 1px solid #E2E8F0;
+        background-color: #F8FAFC;
+    }
+
+    .msgr-stories-carousel {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+    }
+
+    .msgr-stories-carousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .story-bubble {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 60px;
+        cursor: pointer;
+    }
+
+    .story-avatar-holder {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #EDF2F7;
+        border: 2px solid #E2E8F0;
+    }
+
+    .active-pulse { border: 2px solid #22C55E; }
+    .create-story-trigger { border: 2px dashed #CBD5E1; background: #ffffff; }
+
+    .story-char-fallback {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+        color: #ffffff;
+    }
+
+    .u-color-1 { background: #4F46E5; }
+    .u-color-2 { background: #EC4899; }
+    .u-color-user { background: #94A3B8; }
+
+    .story-add-badge {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 18px;
+        height: 18px;
+        background-color: #4F46E5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: white;
+        border: 2px solid #ffffff;
+    }
+
+    .online-indicator-glow {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #22C55E;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+    }
+
+    .story-user-label {
+        font-size: 11px;
+        color: #64748B;
+        margin-top: 6px;
+        text-align: center;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Chat Feed List */
+    .msgr-chat-feed { background: #ffffff; }
+
+    .chat-row {
+        display: flex;
+        padding: 16px 24px;
+        align-items: center;
+        cursor: pointer;
+        border-bottom: 1px solid #F1F5F9;
+        transition: background-color 0.15s ease;
+    }
+
+    .chat-row:hover { background-color: #F8FAFC; }
+    .chat-avatar-zone { position: relative; margin-right: 16px; flex-shrink: 0; }
+
+    .chat-avatar-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .chat-active-dot {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #22C55E;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+    }
+
+    .chat-detail-zone { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .chat-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+
+    .chat-partner-name {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1E293B;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .chat-meta-time { font-size: 12px; color: #94A3B8; }
+    .chat-row-body { display: flex; justify-content: space-between; align-items: center; }
+
+    .chat-snippet-text {
+        margin: 0;
+        font-size: 13px;
+        color: #64748B;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .unread-state { background-color: #F4F5FF; }
+    .unread-state .chat-partner-name { font-weight: 700; }
+    .unread-state .chat-snippet-text { color: #1E293B; font-weight: 500; }
+    .unread-neon-indicator { width: 8px; height: 8px; background-color: #4F46E5; border-radius: 50%; }
+
+    /* ==========================================================================
+       2. FIXED SECURITY OVERLAY STYLE (ដំណោះស្រាយលោតចំកណ្តាលអេក្រង់)
+       ========================================================================== */
+    .msgr-lock-overlay {
+        position: fixed; /* ផ្លាស់ប្តូរទៅ fixed ដើម្បីកុំឱ្យទាក់ទងនឹង overflow:hidden របស់ container */
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.5); /* បន្ថែមផ្ទៃខាងក្រោយស្រអាប់ងងឹត */
+        backdrop-filter: blur(8px);
+        z-index: 99999; /* ធានាថាវាស្ថិតនៅលើគេបង្អស់ */
+        display: none; /* លាក់ជាដំបូង */
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .msgr-lock-overlay.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .lock-card { 
+        width: 90%; 
+        max-width: 360px; 
+        text-align: center; 
+        padding: 32px 24px; 
+        position: relative; 
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .close-lock-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        font-size: 18px;
+        color: #94A3B8;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .close-lock-btn:hover { color: #4F46E5; }
+
+    .lock-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        background: #EEF2F6;
+        color: #4F46E5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px auto;
+    }
+
+    .lock-shield-icon { font-size: 28px; }
+    .lock-card h3 { margin: 0 0 6px 0; font-size: 20px; font-weight: 700; color: #0F172A; }
+    .lock-subtitle { margin: 0 0 24px 0; font-size: 13px; color: #64748B; }
+
+    /* Tabs Selector */
+    .lock-options-row { display: flex; background: #F1F5F9; padding: 4px; border-radius: 10px; margin-bottom: 24px; }
+
+    .lock-choice-btn {
+        flex: 1; border: none; padding: 8px 12px; border-radius: 8px; background: transparent;
+        color: #64748B; font-size: 13px; font-weight: 600; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;
+    }
+
+    .lock-choice-btn.active { background: #ffffff; color: #4F46E5; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+    /* Passcode Zone */
+    #msgr-passcode {
+        width: 160px; text-align: center; font-size: 28px; letter-spacing: 8px; padding: 10px;
+        border: 1px solid #E2E8F0; border-radius: 12px; background: #F8FAFC; outline: none; margin-bottom: 16px;
+    }
+    #msgr-passcode:focus { border-color: #4F46E5; background: #fff; }
+
+    .btn-unlock-action {
+        width: 100%; background: #4F46E5; color: white; border: none; padding: 12px;
+        border-radius: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-unlock-action:hover { background: #4338CA; }
+
+    /* Face ID Zone */
+    .camera-preview-box {
+        position: relative; width: 160px; height: 160px; margin: 0 auto 16px auto;
+        border-radius: 50%; overflow: hidden; border: 3px solid #4F46E5; background: #000;
+    }
+    #lock-video { width: 100%; height: 100%; object-fit: cover; }
+
+    .scan-laser-line {
+        position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+        background: linear-gradient(to right, transparent, #22C55E, transparent);
+        animation: laserScan 2s infinite linear;
+    }
+
+    @keyframes laserScan {
+        0% { top: 0%; }
+        50% { top: 100%; }
+        100% { top: 0%; }
+    }
+
+    .scan-status-text { font-size: 13px; color: #4F46E5; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <!-- CONTAINER របស់ MESSENGER -->
+    <div class="custom-messenger-container">
+        <!-- Top Nav -->
+        <div class="msgr-top-nav">
+            <div class="msgr-brand-row">
+                <h1 class="msgr-logo">Chats</h1>
+                <div class="msgr-header-tools">
+                    <button class="msgr-tool-btn"><i class="fas fa-edit"></i></button>
+                    <!-- ចុចប៊ូតុង Setting នេះដើម្បីបើកផ្ទាំង Lock -->
+                    <button class="msgr-tool-btn" onclick="toggleLockOverlay()"><i class="fas fa-cog"></i></button>
+                </div>
+            </div>
+            <div class="msgr-search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search messages..." class="msgr-search-field">
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="msgr-main-content-scrollable">
+            <!-- Stories -->
+            <div class="msgr-stories-container">
+                <div class="msgr-stories-carousel">
+                    <div class="story-bubble">
+                        <div class="story-avatar-holder create-story-trigger">
+                            <div class="story-char-fallback u-color-user">R</div>
+                            <div class="story-add-badge"><i class="fas fa-plus"></i></div>
+                        </div>
+                        <span class="story-user-label">Your Story</span>
+                    </div>
+                    <div class="story-bubble">
+                        <div class="story-avatar-holder active-pulse">
+                            <div class="story-char-fallback u-color-1">H</div>
+                            <span class="online-indicator-glow"></span>
+                        </div>
+                        <span class="story-user-label">Hun</span>
+                    </div>
+                    <div class="story-bubble">
+                        <div class="story-avatar-holder active-pulse">
+                            <div class="story-char-fallback u-color-2">M</div>
+                            <span class="online-indicator-glow"></span>
+                        </div>
+                        <span class="story-user-label">Meng</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Feed List -->
+            <div class="msgr-chat-feed">
+                <div class="chat-row unread-state">
+                    <div class="chat-avatar-zone">
+                        <div class="chat-avatar-circle u-color-1">H</div>
+                        <span class="chat-active-dot"></span>
+                    </div>
+                    <div class="chat-detail-zone">
+                        <div class="chat-row-header">
+                            <h4 class="chat-partner-name">Hun PhaRoth</h4>
+                            <span class="chat-meta-time">5m ago</span>
+                        </div>
+                        <div class="chat-row-body">
+                            <p class="chat-snippet-text">តើគម្រោងថ្មីរបស់ពួកយើងរៀបចំដល់ណាហើយបង?</p>
+                            <span class="unread-neon-indicator"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       🔒 SECURITY OVERLAY (ស្ថិតនៅក្រៅ Container ដាច់ដោយឡែក)
+       ========================================================================== -->
+    <div id="msgr-lock-overlay" class="msgr-lock-overlay">
+        <div class="lock-card">
+            <button class="close-lock-btn" onclick="toggleLockOverlay()"><i class="fas fa-times"></i></button>
+            
+            <div class="lock-icon-wrapper">
+                <i class="fas fa-shield-halved lock-shield-icon"></i>
+            </div>
+            <h3>Messenger Locked</h3>
+            <p class="lock-subtitle">សូមជ្រើសរើសវិធីសាស្ត្រដើម្បីដោះសោរប្រអប់សារ</p>
+
+            <!-- Choice Tabs -->
+            <div class="lock-options-row">
+                <button type="button" class="lock-choice-btn active" id="btn-choice-pin" onclick="switchLockMode('pin')">
+                    <i class="fas fa-key"></i> Passcode
+                </button>
+                <button type="button" class="lock-choice-btn" id="btn-choice-face" onclick="switchLockMode('face')">
+                    <i class="fas fa-face-smile"></i> Face ID
+                </button>
+            </div>
+
+            <!-- Passcode Input Mode -->
+            <div id="lock-pin-zone" class="lock-zone-content">
+                <div class="pin-input-group">
+                    <input type="password" id="msgr-passcode" maxlength="4" placeholder="••••" autocomplete="off">
+                </div>
+                <button class="btn-unlock-action" onclick="verifyPasscode()">ដោះសោរដោយលេខកូដ</button>
+            </div>
+
+            <!-- Face ID Mode -->
+            <div id="lock-face-zone" class="lock-zone-content" style="display: none;">
+                <div class="camera-preview-box">
+                    <video id="lock-video" autoplay muted playsinline></video>
+                    <div class="scan-laser-line"></div>
+                </div>
+                <div id="scan-status" class="scan-status-text">កំពុងរង់ចាំបើកកាមេរ៉ា...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       3. JAVASCRIPT LOGIC
+       ========================================================================== -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <script>
+    let localStream = null;
+    let faceInterval = null;
+
+    // បើក ឬ បិទ ផ្ទាំង Lock Overlay
+    function toggleLockOverlay() {
+        const overlay = document.getElementById('msgr-lock-overlay');
+        
+        if (overlay.classList.contains('show')) {
+            overlay.classList.remove('show');
+            setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            stopFaceScanner();
+        } else {
+            overlay.style.display = 'flex';
+            setTimeout(() => { overlay.classList.add('show'); }, 10);
+            switchLockMode('pin'); // ឱ្យរត់ទៅកាន់ Mode លេខកូដជាមុន
+        }
+    }
+
+    // ប្តូររវាង Passcode និង Face ID
+    function switchLockMode(mode) {
+        const pinZone = document.getElementById('lock-pin-zone');
+        const faceZone = document.getElementById('lock-face-zone');
+        const btnPin = document.getElementById('btn-choice-pin');
+        const btnFace = document.getElementById('btn-choice-face');
+
+        if (mode === 'pin') {
+            pinZone.style.display = 'block';
+            faceZone.style.display = 'none';
+            btnPin.classList.add('active');
+            btnFace.classList.remove('active');
+            stopFaceScanner();
+        } else {
+            pinZone.style.display = 'none';
+            faceZone.style.display = 'block';
+            btnPin.classList.remove('active');
+            btnFace.classList.add('active');
+            startFaceScanner();
+        }
+    }
+
+    // ផ្ទៀងផ្ទាត់ Passcode ជាមួយ API (Backend)
+    async function verifyPasscode() {
+        const passcode = document.getElementById('msgr-passcode').value;
+        if(passcode.length < 4) return alert("សូមបញ្ចូលលេខកូដ ៤ ខ្ទង់");
+
+        try {
+            const res = await fetch('/auth/verify-messenger-pin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ passcode })
+            });
+            const data = await res.json();
+            if(data.success) {
+                unlockMessengerSuccess();
+            } else {
+                alert("លេខកូដសម្ងាត់មិនត្រឹមត្រូវទេ!");
+            }
+        } catch (error) {
+            // សាកល្បង Mock ជោគជ័យបណ្តោះអាសន្នបើមិនទាន់មាន API ពិតប្រាកដ
+            alert("ដោះសោរដោយលេខកូដ (ម៉ូដែលសាកល្បង Frontend)");
+            unlockMessengerSuccess();
+        }
+    }
+
+    // ដំណើរការប្រព័ន្ធស្កែនមុខ AI 
+    async function startFaceScanner() {
+        const video = document.getElementById('lock-video');
+        const statusText = document.getElementById('scan-status');
+        
+        statusText.innerText = "កំពុងដោនឡូដ AI Core...";
+        
+        try {
+            await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model');
+            
+            statusText.innerText = "កំពុងបើកកាមេរ៉ា...";
+            
+            navigator.mediaDevices.getUserMedia({ video: {} })
+                .then(stream => {
+                    localStream = stream;
+                    video.srcObject = stream;
+                    statusText.innerText = "កំពុងស្កែនផ្ទៃមុខ...";
+                    
+                    faceInterval = setInterval(async () => {
+                        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withFaceDescriptor();
+                        if(detection) {
+                            statusText.innerText = "ស្គាល់ទម្រង់មុខ! កំពុងផ្ទៀងផ្ទាត់...";
+                            clearInterval(faceInterval);
+                            
+                            const res = await fetch('/auth/verify-messenger-face', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ faceDescriptor: Array.from(detection.descriptor) })
+                            });
+                            const data = await res.json();
+                            if(data.success) {
+                                unlockMessengerSuccess();
+                            } else {
+                                statusText.innerText = "❌ មិនមែនជាម្ចាស់ឡើយ!";
+                                setTimeout(() => switchLockMode('pin'), 2000);
+                            }
+                        }
+                    }, 1000);
+                }).catch(err => {
+                    statusText.innerText = "❌ មិនអាចបើកកាមេរ៉ាបានទេ";
+                });
+        } catch (e) {
+            statusText.innerText = "❌ AI មិនអាចដំណើរការបាននៅលើ Local Domain នេះទេ";
+        }
+    }
+
+    // បិទកាមេរ៉ាវិញពេលឈប់ប្រើ
+    function stopFaceScanner() {
+        if(localStream) {
+            localStream.getTracks().forEach(track => track.stop());
+            localStream = null;
+        }
+        if(faceInterval) {
+            clearInterval(faceInterval);
+            faceInterval = null;
+        }
+    }
+
+    // មុខងារជោគជ័យ និងបិទផ្ទាំងត្រលប់ទៅកាន់ឆាត
+    function unlockMessengerSuccess() {
+        stopFaceScanner();
+        const overlay = document.getElementById('msgr-lock-overlay');
+        overlay.classList.remove('show');
+        setTimeout(() => { overlay.style.display = 'none'; }, 300);
+        document.getElementById('msgr-passcode').value = ''; 
+    }
+    </script>
+</body>
+</html>

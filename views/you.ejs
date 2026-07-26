@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VibeCam - Create Your Profile</title>
+
+  <!-- Google Fonts: Battambang -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-white: #fafafa;
+      --card-white: #ffffff;
+      --text-main: #202d47;
+      --text-sub: #6b7280;
+      --accent-pink: #ff4b82;
+      --accent-purple: #7c3aed;
+      --border-light: #e2e8f0;
+      --shadow-soft: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+      --radius-full: 9999px;
+      --radius-card: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Battambang', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    body {
+      background-color: var(--bg-white);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .form-wrapper {
+      background: var(--card-white);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-soft);
+      max-width: 650px;
+      width: 100%;
+      padding: 36px;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .form-header h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .form-header p {
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .form-label span {
+      color: var(--accent-pink);
+    }
+
+    /* ---------------------------------------------------------
+       AVATAR TAB TOGGLE (UPLOAD vs EMOJI)
+       --------------------------------------------------------- */
+    .avatar-tabs {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: var(--radius-full);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: var(--text-main);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 1. UPLOAD PHOTO STYLE */
+    .upload-box {
+      border: 2px dashed var(--border-light);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background: #f8fafc;
+      transition: border-color 0.2s;
+    }
+
+    .upload-box:hover {
+      border-color: var(--accent-purple);
+    }
+
+    .preview-container {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 2rem;
+    }
+
+    .preview-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .upload-text {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 700;
+    }
+
+    /* 2. EMOJI GRID (20 EMOJIS) */
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .avatar-option {
+      display: none;
+    }
+
+    .avatar-card {
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 2px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .avatar-card:hover {
+      transform: scale(1.08);
+      border-color: var(--accent-pink);
+    }
+
+    .avatar-option:checked + .avatar-card {
+      border-color: transparent;
+      background: linear-gradient(135deg, #ffe4e6, #e0e7ff);
+      box-shadow: 0 0 0 4px var(--accent-purple);
+      transform: scale(1.05);
+    }
+
+    /* ---------------------------------------------------------
+       HABITS, INPUTS & BUTTONS
+       --------------------------------------------------------- */
+    .habits-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .habit-checkbox {
+      display: none;
+    }
+
+    .habit-pill {
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      background: #f1f5f9;
+      color: var(--text-sub);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .habit-checkbox:checked + .habit-pill {
+      background: var(--text-main);
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      background: #f8fafc;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent-purple);
+      background: white;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: var(--radius-full);
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.25);
+      transition: transform 0.2s;
+      margin-top: 12px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 580px) {
+      .input-row { grid-template-columns: 1fr; }
+      .avatar-grid { grid-template-columns: repeat(4, 1fr); }
+      .form-wrapper { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-wrapper">
+    <div class="form-header">
+      <h1>រៀបចំ Profile របស់អ្នក ✨</h1>
+      <p>ជ្រើសរើសរូបតំណាង និងទម្លាប់ដើម្បីឱ្យគេស្គាល់!</p>
+    </div>
+
+    <form id="profileForm" action="/Detail" method="POST" enctype="multipart/form-data">
+      
+      <!-- 1. AVATAR SELECTION -->
+      <div class="form-group">
+        <label class="form-label">រូបតំណាង (Avatar) <span>*</span></label>
+        
+        <!-- Toggle Tabs -->
+        <div class="avatar-tabs">
+          <button type="button" class="tab-btn active" id="btnEmoji" onclick="switchAvatarType('emoji')">ជ្រើសរើស Emoji (20)</button>
+          <button type="button" class="tab-btn" id="btnUpload" onclick="switchAvatarType('upload')">Upload រូបថតផ្ទាល់ខ្លួន</button>
+        </div>
+
+        <!-- Mode Tracking Field -->
+        <input type="hidden"  name="avatar_type"  id="activeMode" value="emoji">
+
+        <!-- TAB 1: EMOJI GRID -->
+        <div id="emojiTab" class="tab-content active">
+          <div class="avatar-grid">
+            <label><input type="radio" name="Emoji" value="😎" class="avatar-option" checked /><div class="avatar-card">😎</div></label>
+            <label><input type="radio" name="Emoji" value="👾" class="avatar-option" /><div class="avatar-card">👾</div></label>
+            <label><input type="radio" name="Emoji" value="🔥" class="avatar-option" /><div class="avatar-card">🔥</div></label>
+            <label><input type="radio" name="Emoji" value="🐱" class="avatar-option" /><div class="avatar-card">🐱</div></label>
+            <label><input type="radio" name="Emoji" value="🎧" class="avatar-option" /><div class="avatar-card">🎧</div></label>
+            <label><input type="radio" name="Emoji" value="👑" class="avatar-option" /><div class="avatar-card">👑</div></label>
+            <label><input type="radio" name="Emoji" value="🦊" class="avatar-option" /><div class="avatar-card">🦊</div></label>
+            <label><input type="radio" name="Emoji" value="⚡" class="avatar-option" /><div class="avatar-card">⚡</div></label>
+            <label><input type="radio" name="Emoji" value="🎨" class="avatar-option" /><div class="avatar-card">🎨</div></label>
+
+            <label><input type="radio" name="Emoji" value="🥳" class="avatar-option" /><div class="avatar-card">🥳</div></label>
+            <label><input type="radio" name="Emoji" value="🚀" class="avatar-option" /><div class="avatar-card">🚀</div></label>
+            <label><input type="radio" name="Emoji" value="🤖" class="avatar-option" /><div class="avatar-card">🤖</div></label>
+            <label><input type="radio" name="Emoji" value="🦄" class="avatar-option" /><div class="avatar-card">🦄</div></label>
+            <label><input type="radio" name="Emoji" value="🍕" class="avatar-option" /><div class="avatar-card">🍕</div></label>
+
+            <label><input type="radio" name="Emoji" value="🎮" class="avatar-option" /><div class="avatar-card">🎮</div></label>
+            <label><input type="radio" name="Emoji" value="💎" class="avatar-option" /><div class="avatar-card">💎</div></label>
+            <label><input type="radio" name="Emoji" value="🐼" class="avatar-option" /><div class="avatar-card">🐼</div></label>
+            <label><input type="radio" name="Emoji" value="👻" class="avatar-option" /><div class="avatar-card">👻</div></label>
+            <label><input type="radio" name="Emoji" value="🌈" class="avatar-option" /><div class="avatar-card">🌈</div></label>
+            <label><input type="radio" name="Emoji" value="🥑" class="avatar-option" /><div class="avatar-card">🥑</div></label>
+          </div>
+        </div>
+
+        <!-- TAB 2: UPLOAD PHOTO -->
+        <div id="uploadTab" class="tab-content">
+          <div class="upload-box" onclick="document.getElementById('photoInput').click()">
+            <div class="preview-container">
+              <span id="placeholderIcon">📷</span>
+              <img id="imagePreview" alt="Profile Preview" />
+            </div>
+            <div class="upload-text" id="uploadText">ចុចទីនេះដើម្បីជ្រើសរើសរូបភាព (PNG, JPG)</div>
+<input type="file" id="photoInput" name="Photo" accept="image/*" style="display: none;" onchange="previewImage(event)">          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. GENDER, AGE, LOCATION -->
+      <div class="input-row">
+        <div class="form-group">
+          <label class="form-label" for="gender">ភេទ <span>*</span></label>
+          <select id="gender" name="Gender" class="form-select" required>
+            <option value="" disabled selected>ជ្រើសរើស...</option>
+            <option value="Male">ប្រុស (Male)</option>
+            <option value="Female">ស្រី (Female)</option>
+            <option value="Other">ផ្សេងៗ (Other)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="age">អាយុ</label>
+          <input type="number" id="age" name="Age" class="form-input" placeholder="ឧ. 20" min="13" max="100" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="location">ទីក្រុង/ខេត្ត</label>
+          <input type="text" id="location" name="Place" class="form-input" placeholder="ឧ. ភ្នំពេញ" />
+        </div>
+      </div>
+
+      <!-- 3. HABITS -->
+      <div class="form-group">
+        <label class="form-label">ទម្លាប់ និងចំណង់ចំណូលចិត្ត</label>
+        <div class="habits-grid">
+          <label><input type="checkbox" name="Favourite" value="Gaming" class="habit-checkbox" /><span class="habit-pill">🎮 លេងហ្គេម</span></label>
+          <label><input type="checkbox" name="Favourite" value="Music" class="habit-checkbox" /><span class="habit-pill">🎵 ស្ដាប់ចម្រៀង</span></label>
+          <label><input type="checkbox" name="Favourite" value="NightOwl" class="habit-checkbox" /><span class="habit-pill">🌙 ដេកយប់ជ្រៅ</span></label>
+          <label><input type="checkbox" name="Favourite" value="Coffee" class="habit-checkbox" /><span class="habit-pill">☕ ញៀនកាហ្វេ</span></label>
+          <label><input type="checkbox" name="Favourite" value="Anime" class="habit-checkbox" /><span class="habit-pill">🍿 មើលអានីមេ</span></label>
+          <label><input type="checkbox" name="Favourite" value="Gym" class="habit-checkbox" /><span class="habit-pill">🏋️‍♂️ ហាត់ប្រាណ</span></label>
+          <label><input type="checkbox" name="Favourite" value="Travel" class="habit-checkbox" /><span class="habit-pill">✈️ ដើរលេង</span></label>
+          <label><input type="checkbox" name="Favourite" value="Coding" class="habit-checkbox" /><span class="habit-pill">💻 សរសេរកូដ</span></label>
+        </div>
+      </div>
+
+      <!-- 4. BIO -->
+      <div class="form-group">
+        <label class="form-label" for="bio">ជីវប្រវត្តិសង្ខេប (Bio)</label>
+        <textarea id="bio" name="Detail" class="form-textarea" placeholder="រៀបរាប់ពីខ្លួនអ្នកបន្តិច..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">រក្សាទុក Profile 🚀</button>
+
+    </form>
+  </div>
+
+  <script>
+    // Tab switching logic
+    function switchAvatarType(type) {
+      const btnEmoji = document.getElementById('btnEmoji');
+      const btnUpload = document.getElementById('btnUpload');
+      const emojiTab = document.getElementById('emojiTab');
+      const uploadTab = document.getElementById('uploadTab');
+      const activeMode = document.getElementById('activeMode');
+      const emojiRadios = document.querySelectorAll('input[name="Emoji"]');
+      const photoInput = document.getElementById('photoInput');
+
+      activeMode.value = type;
+
+      if (type === 'emoji') {
+        btnEmoji.classList.add('active');
+        btnUpload.classList.remove('active');
+        emojiTab.classList.add('active');
+        uploadTab.classList.remove('active');
+
+        // Re-enable radio inputs for submission
+        emojiRadios.forEach(radio => radio.disabled = false);
+
+        // Clear uploaded file when returning to emoji tab
+        photoInput.value = '';
+      } else {
+        btnUpload.classList.add('active');
+        btnEmoji.classList.remove('active');
+        uploadTab.classList.add('active');
+        emojiTab.classList.remove('active');
+
+        // Disable radio inputs so req.body.Emoji becomes undefined in backend
+        emojiRadios.forEach(radio => radio.disabled = true);
+      }
+    }
+
+    // Image preview handler
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const imagePreview = document.getElementById('imagePreview');
+      const placeholderIcon = document.getElementById('placeholderIcon');
+      const uploadText = document.getElementById('uploadText');
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = 'block';
+          placeholderIcon.style.display = 'none';
+          uploadText.innerText = 'ចុចទីនេះដើម្បីប្ដូររូបភាព';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Frontend validation check on submit
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      const mode = document.getElementById('activeMode').value;
+      const photoInput = document.getElementById('photoInput');
+
+      if (mode === 'upload' && !photoInput.files.length) {
+        e.preventDefault();
+        alert('សូមជ្រើសរើសរូបថតជាមុនសិន ឬប្ដូរទៅប្រើ Emoji!');
+      }
+    });
+  </script>
+
+</body>
+</html>

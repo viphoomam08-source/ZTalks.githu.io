@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GenZ Talk | Premium Workspace</title>
+    
+    <!-- Sharp, clean modern font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh; 
+            padding-top: env(safe-area-inset-top);
+        }
+
+        /* 🗺️ Main Navigation Bar */
+        .app-menu-bar {
+            height: 70px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            z-index: 100;
+        }
+
+        .policy-modal-card {
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active {
+            display: flex !important;
+        }
+
+        .policy-scroll-body {
+            overflow-y: auto;
+            max-height: 400px;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #6366f1;
+            letter-spacing: -0.03em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* Nav Tabs */
+        .menu-tabs {
+            display: flex;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 16px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            max-width: 100%;
+        }
+
+        .menu-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .menu-tab-btn {
+            padding: 8px 14px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .menu-tab-btn:hover:not(.active) {
+            color: #334155;
+            background: rgba(226, 232, 240, 0.6);
+        }
+
+        .menu-tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 8px rgba(148, 163, 184, 0.15);
+        }
+
+        .user-tag {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #475569;
+            background: #f8fafc;
+            padding: 8px 14px;
+            border-radius: 99px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .user-tag:hover {
+            background: #6366f1;
+            color: #ffffff;
+            border-color: #6366f1;
+        }
+
+        /* Workspace Container */
+        .workspace-view {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100dvh - 70px);
+            overflow: hidden;
+        }
+
+        .view-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 16px;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom));
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .view-panel:not(.active-view) {
+            display: none !important;
+        }
+
+        /* 📺 PANEL 1: REELS & FEED POSTS */
+        .view-panel.container-post.active-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            background-color: #f1f5f9;
+        }
+
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            width: 100%;
+            max-width: 540px;
+            gap: 8px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            outline: none;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #6366f1;
+        }
+
+        .search-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-btn:hover {
+            background: #4f46e5;
+        }
+
+        /* Media Card */
+        .media-card {
+            width: 100%;
+            max-width: 540px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(148, 163, 184, 0.08);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; 
+        }
+
+        .post-header {
+            padding: 14px 16px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .post-author {
+            font-weight: 600; 
+            font-size: 0.92rem;
+            color: #1e293b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+        }
+
+        .follow-btn {
+            background: #6366f1;
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            min-height: 28px;
+            border-radius: 99px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+            flex-shrink: 0;
+        }
+
+        .follow-btn:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        .follow-btn:active {
+            transform: scale(0.96);
+        }
+
+        .follow-btn.followed {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            box-shadow: none;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            background: #0f172a;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-gallery {
+            display: grid;
+            gap: 2px;
+            width: 100%;
+        }
+
+        .post-gallery.grid-1 { grid-template-columns: 1fr; }
+        .post-gallery.grid-2 { grid-template-columns: 1fr 1fr; }
+        .post-gallery.grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .post-gallery.grid-3 img:first-child { grid-row: span 2; }
+        .post-gallery.grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+        .post-gallery.grid-5 { grid-template-columns: repeat(3, 1fr); }
+
+        .gallery-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .grid-1 .gallery-img {
+            aspect-ratio: 4 / 3;
+        }
+
+        .play-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 0.72rem;
+            pointer-events: none;
+        }
+
+        .post-caption {
+            padding: 14px 16px 10px 16px; 
+            color: #334155; 
+            font-size: 0.9rem; 
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+     .post-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 12px 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.action-trigger-btn {
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+}
+
+.action-trigger-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.action-trigger-btn.liked {
+    color: #ef4444;
+}
+
+.action-trigger-btn.liked svg {
+    fill: #ef4444;
+    stroke: #ef4444;
+}
+
+.action-trigger-btn.saved {
+    color: #6366f1;
+}
+
+.action-trigger-btn.saved svg {
+    fill: #6366f1;
+    stroke: #6366f1;
+}
+
+/* Push Save button to the far right */
+.action-trigger-btn.save-btn {
+    margin-left: auto;
+}
+
+.action-icon {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+        /* 🎥 PANEL 4: LIVE ROOM RESPONSIVE */
+        .live-room-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #0f172a;
+            border-radius: 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .video-grid-mock {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .video-feed-box {
+            background: #1e293b;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.88rem;
+            position: relative;
+            min-height: 140px;
+        }
+
+        .feed-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.72rem;
+        }
+
+        .call-controls {
+            height: 64px;
+            background: #111827;
+            border-top: 1px solid #1f2937;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .end-call-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        /* Lightbox Overlay */
+        .lightbox {
+            display: none; 
+            position: fixed; 
+            z-index: 9999;
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0, 0, 0, 0.9); 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        .lightbox-img {
+            max-width: 92%; 
+            max-height: 85%; 
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            position: absolute; 
+            top: 16px; 
+            right: 24px; 
+            color: #fff; 
+            font-size: 32px; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
+
+        /* 🔘 FLOATING CIRCLE BUTTON (FAB) */
+        .fab-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 500;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fab-btn:hover {
+            transform: scale(1.08);
+            background: #4338ca;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 📝 CREATE POST MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-close-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-close-icon:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .modal-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .user-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #3730a3;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1e293b;
+        }
+
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .post-textarea {
+            width: 100%;
+            min-height: 100px;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 1rem;
+            color: #1e293b;
+        }
+
+        .post-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .upload-dropzone {
+            border: 2px dashed #e2e8f0;
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .upload-dropzone:hover {
+            border-color: #6366f1;
+            background: #f1f5f9;
+        }
+
+        .upload-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .upload-subtitle {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .modal-footer {
+            padding: 0 20px 20px 20px;
+        }
+
+        .submit-post-btn, .modal-submit-btn {
+            width: 100%;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-post-btn:hover, .modal-submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .lang-btn-group {
+            display: flex;
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .lang-btn {
+            border: none;
+            background: transparent;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 📱 RESPONSIVE MEDIA ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .app-menu-bar {
+                height: 60px;
+                padding: 0 12px;
+                gap: 8px;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .user-tag {
+                padding: 6px 10px;
+                font-size: 0.78rem;
+            }
+
+            .menu-tab-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+
+            .workspace-view {
+                height: calc(100dvh - 60px);
+            }
+
+            .video-grid-mock {
+                grid-template-columns: 1fr;
+            }
+
+            .fab-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+        }
+        /* Comment Drawer Container */
+.comments-section {
+    padding: 12px 16px;
+    background-color: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Comments List */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+/* Individual Comment Card */
+.single-comment {
+    background-color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    color: #334155;
+    line-height: 1.4;
+    border: 1px solid #e2e8f0;
+    width: fit-content;
+    max-width: 90%;
+}
+
+.single-comment strong {
+    color: #0f172a;
+    margin-right: 6px;
+}
+
+/* Inline Comment Input Container */
+.comment-input-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 4px 6px 4px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.comment-input-inline:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Text Input Field */
+.comment-input-inline input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.88rem;
+    color: #1e293b;
+    font-family: inherit;
+    padding: 6px 0;
+}
+
+.comment-input-inline input::placeholder {
+    color: #94a3b8;
+}
+
+/* Post Button */
+.comment-input-inline button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comment-input-inline button:hover {
+    background-color: #2563eb;
+}
+
+        .circle {
+            width: 42px;
+            height: 42px;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .circle:hover {
+            transform: scale(1.15) translateY(-2px);
+            box-shadow: 0 8px 16px rgba(55, 48, 163, 0.2);
+            border-color: #c7d2fe;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🗺️ Main Header Navigation -->
+    <header class="app-menu-bar">
+        <div class="logo">GenZ Talk</div>
+        
+        <nav class="menu-tabs">
+            <button class="menu-tab-btn active" onclick="switchView('reels-view', this)">
+                <span>📺</span> Reels
+            </button>
+            <button class="menu-tab-btn" onclick="switchView('find-view', this)">
+                <span>🔍</span> Discover
+            </button>
+            <button class="menu-tab-btn" onclick="switchView('chat-view', this)">
+                <span>💬</span> Chat
+            </button>
+            <button class="menu-tab-btn" onclick="switchView('live-view', this)">
+                <span>🎥</span> Live
+            </button>
+            <button class="menu-tab-btn" onclick="switchView('policy-view', this)">
+                <span>📜</span> Policy
+            </button>
+        </nav>
+
+        <button class="user-tag" id="profile-tag" onclick="openAccount()">
+            Hi <%= user.username %>
+        </button>
+    </header>
+
+    <!-- Workspace Window -->
+    <div class="workspace-view">
+        
+        <!-- 📺 VIEW 1: SCROLLABLE REELS & POSTS FEED -->
+        <div id="reels-view" class="view-panel container-post active-view">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search posts...">
+                <button class="search-btn">Search</button>
+            </div>
+            
+            <% for(let i = 0; i < post.length; i++) { %>
+            <div class="media-card">
+                <div class="post-header">
+                    <span class="post-author">
+                        <div class="circle">
+                           <p><%= post[i]?.emoji_char || '👤' %></p> 
+                        </div>
+                        
+                        <p style="margin-left: 35px; margin-top: -18px;"><%= post[i].creator_username %></p>  
+                        <div class="time">
+                            <p>12h</p>
+                        </div>  
+                    </span>  
+                      
+                    <button class="follow-btn" onclick="toggleFollow(this)">
+                        <span>+</span> Follow
+                    </button>
+                </div>
+                
+                <% 
+                    let images = [];
+                    if (post[i].pic) {
+                        try {
+                            images = JSON.parse(post[i].pic);
+                        } catch (e) {
+                            images = post[i].pic ? [post[i].pic] : [];
+                        }
+                    }
+                %>
+
+                <% if ((Array.isArray(images) && images.length > 0) || post[i].video) { %>
+                    <div class="video-placeholder">
+                        <% if (Array.isArray(images) && images.length > 0) { %>
+                            <div class="post-gallery grid-<%= images.length > 5 ? 5 : images.length %>">
+                                <% images.forEach(singlePic => { %>
+                                    <img 
+                                        src="/images/<%= singlePic %>" 
+                                        alt="Post Media" 
+                                        class="gallery-img" 
+                                        onclick="zoomImage(this)"
+                                        onerror="this.style.display='none';"
+                                    >
+                                <% }) %>
+                            </div>
+                        <% } else if (post[i].video) { %>
+                            <video controls class="gallery-img" style="aspect-ratio: 16/9;">
+                                <source src="/videos/<%= post[i].video %>" type="video/mp4">
+                                Your browser does not support video.
+                            </video>
+                        <% } %>
+
+                        <div class="play-tag">⚡ Streaming Loop</div>
+                    </div>
+                <% } %>
+
+                <div class="post-caption">
+                    <%= post[i].text %>
+                </div>
+               <div class="post-actions-row">
+    <!-- Like Button -->
+    <button class="action-trigger-btn" onclick="toggleLike(this)">
+        <svg class="action-icon" viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="like-count">12</span>
+    </button>
+
+    <!-- Comment Button -->
+    <button class="action-trigger-btn" onclick="toggleCommentsSection(comments-sec-1)">
+        <svg class="action-icon" viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="comment-count">1</span>
+    </button>
+
+    <!-- Share Button -->
+    <button class="action-trigger-btn" onclick="sharePost()">
+        <svg class="action-icon" viewBox="0 0 24 24">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        <span>Share</span>
+    </button>
+
+    <!-- Save Button -->
+    <button class="action-trigger-btn save-btn" onclick="toggleSave(this)">
+        <svg class="action-icon" viewBox="0 0 24 24">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="save-label">Save</span>
+    </button>
+</div>
+                    
+                <div id="comments-post-<%= post[i].id %>" class="comments-section-wrapper">
+                    <div class="comments-list">
+                        <div class="single-comment"><strong>@sarah_travels</strong> Super clean layout!</div>
+                    </div>
+                    <div class="comment-input-inline">
+                        <input type="text" placeholder="Write a comment..." onkeypress="handleCommentSubmit(event, 'comments-post-<%= post[i].id %>', this)">
+                        <button class="comment-submit-btn" onclick="addCommentDirectly('comments-post-<%= post[i].id %>')">Post</button>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+            
+        <!-- 🔍 VIEW 2: TRAILER DISCOVERY INTERFACE -->
+        <div id="find-view" class="view-panel">
+            <%- include('discover') %>
+        </div>
+
+        <!-- 💬 VIEW 3: MESSENGER BOX -->
+        <div id="chat-view" class="view-panel" style="background: #f1f5f9;">
+            <%- include('video') %>
+        </div>
+
+        <!-- 🎥 VIEW 4: LIVE CALL ROOM -->
+        <div id="live-view" class="view-panel">
+            <div class="live-room-container">
+                <div class="video-grid-mock">
+                    <div class="video-feed-box">
+                        <span>[ Local Video ]</span>
+                        <div class="feed-label">Your Camera</div>
+                    </div>
+                    <div class="video-feed-box">
+                        <span>[ Peer Video ]</span>
+                        <div class="feed-label">Connected Friend</div>
+                    </div>
+                </div>
+                <div class="call-controls">
+                    <button class="end-call-btn" onclick="alert('Disconnecting session...')">
+                        Disconnect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📜 VIEW 5: POLICY -->
+        <div id="policy-view" class="view-panel">
+            <%- include('policy') %>
+        </div>
+
+    </div>
+
+    <!-- 🔘 Floating Circle Action Button -->
+    <button class="fab-btn" onclick="openCreatePostModal()" aria-label="Create Post">+</button>
+
+    <!-- 📝 Create Post Modal -->
+    <div id="createPostModal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">Create Post</span>
+                <button class="modal-close-icon" onclick="closeCreatePostModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="user-profile-row">
+                    <div class="avatar-circle">
+                        <%= user.username ? user.username.charAt(0).toUpperCase() : 'D' %>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name"><%= user.username || 'daro' %></span>
+                        <div class="privacy-badge">
+                            <span>👥</span> Friends
+                        </div>
+                    </div>
+                </div>
+                
+                <textarea 
+                    class="post-textarea" 
+                    placeholder="What's on your mind, <%= user.username || 'daro' %>?"
+                ></textarea>
+
+                <div class="upload-dropzone" onclick="document.getElementById('postFileInput').click()">
+                    <div class="upload-title">
+                        <span>📷</span> Add photos or videos
+                    </div>
+                    <div class="upload-subtitle">
+                        Supports JPG, PNG, MP4, WebM up to 50MB
+                    </div>
+                    <input type="file" id="postFileInput" style="display: none;" multiple accept="image/*,video/*">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="submit-post-btn" onclick="closeCreatePostModal()">Post to Feed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Markup -->
+    <div id="imageLightbox" class="lightbox" onclick="closeZoom()">
+        <span class="close-btn" onclick="closeZoom()">&times;</span>
+        <img id="zoomedImage" class="lightbox-img" alt="Zoomed View">
+    </div>
+
+    <!-- Platform Policy Modal -->
+    <div id="policyModal" class="modal-overlay <%= showPolicyModal ? 'active' : '' %>" onclick="handleModalOverlayClick(event)">
+        <div class="modal-card policy-modal-card">
+            <div class="modal-header">
+                <h3>Platform Policy & Terms</h3>
+                <!-- Language Switcher -->
+                <div class="lang-btn-group">
+                    <button type="button" class="lang-btn active" id="btn-en" onclick="setPolicyLang('en')">EN</button>
+                    <button type="button" class="lang-btn" id="btn-km" onclick="setPolicyLang('km')">ភាសាខ្មែរ</button>
+                </div>
+            </div>
+
+            <div class="modal-body policy-scroll-body">
+                <!-- English Content -->
+                <div id="policy-content-en">
+                    <h4>1. Our Mission</h4>
+                    <p>Our platform is dedicated to sharing knowledge, fostering creativity, and building an inclusive educational community.</p>
+                    
+                    <h4>2. Acceptable Content Guidelines</h4>
+                    <p>All shared content must inspire learning, skill development, and respectful engagement.</p>
+                    
+                    <h4>3. Prohibited Content</h4>
+                    <p>Hate speech, harassment, fake news, and explicit content are strictly forbidden.</p>
+                </div>
+
+                <!-- Khmer Content -->
+                <div id="policy-content-km" style="display: none;">
+                    <h4>១. បេសកកម្មរបស់យើង</h4>
+                    <p>វេទិការបស់យើងត្រូវបានបង្កើតឡើងដើម្បីចែករំលែកចំណេះដឹង លើកកម្ពស់គំនិតច្នៃប្រឌិត និងបង្កើតសហគមន៍អប់រំ។</p>
+                    
+                    <h4>២. គោលការណ៍ណែនាំ</h4>
+                    <p>រាល់ខ្លឹមសារដែលបានចែករំលែកត្រូវតែផ្តល់តម្លៃអប់រំ និងការគោរពគ្នាទៅវិញទៅមក។</p>
+                    
+                    <h4>៣. ខ្លឹមសារហាមឃាត់</h4>
+                    <p>ការប្រើប្រាស់ពាក្យសម្ដីអាក្រក់ ការរំលោភបំពាន និងព័ត៌មានមិនពិតត្រូវហាមឃាត់ដាច់ខាត់។</p>
+                </div>
+            </div>
+
+            <!-- Policy Acceptance Footer -->
+            <div class="modal-footer">
+                <form action="/accept-policy" method="POST" id="policyForm" onsubmit="handlePolicySubmit(event)">
+                    <button type="submit" class="modal-submit-btn">I Agree & Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Controls Script -->
+    <script>
+        // Policy Modal Language Switcher
+      
+        function setPolicyLang(lang) {
+            const en = document.getElementById('policy-content-en');
+            const km = document.getElementById('policy-content-km');
+            const btnEn = document.getElementById('btn-en');
+            const btnKm = document.getElementById('btn-km');
+
+            if (lang === 'km') {
+                if (en) en.style.display = 'none';
+                if (km) km.style.display = 'block';
+                if (btnKm) btnKm.classList.add('active');
+                if (btnEn) btnEn.classList.remove('active');
+            } else {
+                if (km) km.style.display = 'none';
+                if (en) en.style.display = 'block';
+                if (btnEn) btnEn.classList.add('active');
+                if (btnKm) btnKm.classList.remove('active');
+            }
+        }
+
+        // Handle Policy Form Submit
+        function handlePolicySubmit(event) {
+            // Allows the form to natively post to /accept-policy or custom handler
+        }
+
+        // Modal Handlers
+        function openCreatePostModal() {
+            const modal = document.getElementById('createPostModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeCreatePostModal() {
+            const modal = document.getElementById('createPostModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function handleModalOverlayClick(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Follow/Unfollow Toggle
+        function toggleFollow(btnElement) {
+            if (btnElement.classList.contains('followed')) {
+                btnElement.classList.remove('followed');
+                btnElement.innerHTML = '<span>+</span> Follow';
+            } else {
+                btnElement.classList.add('followed');
+                btnElement.innerHTML = '<span>✓</span> Following';
+            }
+        }
+
+        // Lightbox Zoom Controls
+        function zoomImage(element) {
+            const lightbox = document.getElementById("imageLightbox");
+            const zoomedImg = document.getElementById("zoomedImage");
+            
+            if (lightbox && zoomedImg) {
+                lightbox.style.display = "flex"; 
+                zoomedImg.src = element.src; 
+            }
+        }
+
+        function closeZoom() {
+            const lightbox = document.getElementById("imageLightbox");
+            if (lightbox) lightbox.style.display = "none";
+        }
+
+        // Account Link Navigation
+        function openAccount() {
+            window.location.href = '/account';
+        }
+
+        // Tab View Switching
+        function switchView(viewId, buttonElement) {
+            document.querySelectorAll('.menu-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active-view'));
+            
+            if (buttonElement) buttonElement.classList.add('active');
+            const targetPanel = document.getElementById(viewId);
+            if (targetPanel) targetPanel.classList.add('active-view');
+        }
+
+        // Like Count Toggle
+       function toggleLike(btn) {
+    btn.classList.toggle('liked');
+    const countSpan = btn.querySelector('.like-count');
+    let currentCount = parseInt(countSpan.textContent, 10) || 0;
+
+    if (btn.classList.contains('liked')) {
+        countSpan.textContent = currentCount + 1;
+    } else {
+        countSpan.textContent = Math.max(0, currentCount - 1);
+    }
+}
+
+function toggleSave(btn) {
+    btn.classList.toggle('saved');
+    const label = btn.querySelector('.save-label');
+    if (btn.classList.contains('saved')) {
+        label.textContent = 'Saved';
+    } else {
+        label.textContent = 'Save';
+    }
+}
+
+function toggleCommentsSection(sectionId) {
+    const targetsContainer = document.getElementById(sectionId);
+    
+    // Safety check if element exists
+    if (!targetsContainer) {
+        console.error("Could not find section with ID:", sectionId);
+        return;
+    }
+
+    // Get current actual display property (handles CSS stylesheets)
+    const currentDisplay = window.getComputedStyle(targetsContainer).display;
+
+    if (currentDisplay === "none") {
+        targetsContainer.style.display = "block";
+    } else {
+        targetsContainer.style.display = "none";
+    }
+}
+
+function sharePost() {
+    console.log('Share clicked');
+}
+        // Comments Drawer Toggle
+        function toggleCommentsSection(sectionId) {
+            const targetsContainer = document.getElementById(sectionId);
+if (targetsContainer.style.display === "none" || !targetsContainer.style.display)
+            if (targetsContainer.style.display === "none" || !targetsContainer.style.display) {
+                targetsContainer.style.display = "block";
+            } else {
+                targetsContainer.style.display = "none";
+            }
+        }
+
+        // Comment Handlers
+        function handleCommentSubmit(event, sectionId, inputElement) {
+            if (event.key === 'Enter' && inputElement.value.trim() !== "") {
+                injectCommentElement(sectionId, inputElement);
+            }
+        }
+
+        function addCommentDirectly(sectionId) {
+            const wrapper = document.getElementById(sectionId);
+            if (!wrapper) return;
+            const inputElement = wrapper.querySelector('.comment-input-inline input');
+            if (inputElement && inputElement.value.trim() !== "") {
+                injectCommentElement(sectionId, inputElement);
+            }
+        }
+
+        // Share Link Functionality
+        function sharePost(postId) {
+            const postUrl = `${window.location.origin}/post/${postId}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this post on GenZ Talk!',
+                    url: postUrl
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(postUrl).then(() => {
+                    alert('Post link copied to clipboard!');
+                });
+            }
+        }
+
+        // Dynamic Comment Injection Helper
+        function injectCommentElement(sectionId, inputElement) {
+            const wrapper = document.getElementById(sectionId);
+            if (!wrapper) return;
+            
+            const listContainer = wrapper.querySelector('.comments-list');
+            const mediaCard = wrapper.closest('.media-card');
+            const counterSpan = mediaCard ? mediaCard.querySelector('.comment-count') : null;
+            
+            if (listContainer) {
+                const newComment = document.createElement('div');
+                newComment.className = 'single-comment';
+                newComment.innerHTML = `<strong>@user</strong> ${escapeHTML(inputElement.value)}`;
+                
+                listContainer.appendChild(newComment);
+                
+                if (counterSpan) {
+                    counterSpan.innerText = (parseInt(counterSpan.innerText) || 0) + 1;
+                }
+                
+                inputElement.value = "";
+                listContainer.scrollTop = listContainer.scrollHeight;
+            }
+        }
+
+        // XSS Prevention Helper
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+        const socket = io();
+
+    // 1. Connection Event Listeners
+    socket.on('connect', () => {
+        console.log('Connected to server with Socket ID:', socket.id);
+        
+        // Optionally join a room or send initial user data
+        socket.emit('register_user', {
+            username: '<%= user.username || "Guest" %>'
+        });
+    });
+
+    socket.on('disconnect', () => {
+        console.warn('Disconnected from server');
+    });
+
+    // 2. RECEIVE REAL-TIME MESSAGES / COMMENTS
+    // Listen for new comments broadcast by the server
+    socket.on('new_comment', (data) => {
+        // data structure: { postId: '123', username: 'alex', text: 'Hey there!' }
+        const targetContainer = document.getElementById('comments-post-' + data.postId);
+        if (targetContainer) {
+            const commentsList = targetContainer.querySelector('.comments-list');
+            if (commentsList) {
+                const commentEl = document.createElement('div');
+                commentEl.className = 'single-comment';
+                commentEl.innerHTML = `<strong>@${data.username}</strong> ${data.text}`;
+                commentsList.appendChild(commentEl);
+                
+                // Auto-scroll to the bottom of comments
+                commentsList.scrollTop = commentsList.scrollHeight;
+            }
+        }
+    });
+
+    // 3. SEND COMMENTS VIA SOCKET
+    function sendSocketComment(postId, inputEl) {
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        // Emit the event to the server
+        socket.emit('send_comment', {
+            postId: postId,
+            username: '<%= user.username || "Anonymous" %>',
+            text: text
+        });
+
+        // Clear input box
+        inputEl.value = '';
+    }
+
+    // 4. Keyboard Listener for Comment Input Box
+    function handleCommentSubmit(event, containerId, inputEl) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            // Extract the numerical or raw ID from containerId (e.g. 'comments-post-12' -> '12')
+            const postId = containerId.replace('comments-post-', '');
+            sendSocketComment(postId, inputEl);
+        }
+    }
+
+    // Helper button trigger for comment posting
+    function addCommentDirectly(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const inputEl = container.querySelector('input');
+        if (inputEl) {
+            const postId = containerId.replace('comments-post-', '');
+            sendSocketComment(postId, inputEl);
+        }
+    }
+    </script>
+</body>
+</html>

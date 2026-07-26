@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Dashboard</title>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- 1. Left Sidebar Navigation (STUCK ASIDE) -->
+     
+    <aside class="dashboard-sidebar">
+      <div class="user-profile-card">
+        <div class="avatar-container">
+          <%= profile?.emoji_char || '👤'%>
+        </div>
+        <h3><%= user?.username ||'Unknown'%></h3>
+        <div class="profile-details-card">
+          <div class="detail-item">
+            <span class="detail-icon">❤️</span>
+            <div class="detail-content">
+              <span class="detail-label">Favorite</span>
+              <span class="detail-value"><%= profile?.Favourite || 'Not specified' %></span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-icon">👤</span>
+            <div class="detail-content">
+              <span class="detail-label">Gender</span>
+              <span class="detail-value"><%= profile?.Gender || 'Not specified' %></span>
+            </div>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-icon">📍</span>
+            <div class="detail-content">
+              <span class="detail-label">Location</span>
+              <span class="detail-value"><%= profile?.Place || 'Not specified' %></span>
+            </div>
+          </div>
+
+          <div class="detail-item full-width">
+            <span class="detail-icon">📝</span>
+            <div class="detail-content">
+              <span class="detail-label">About You</span>
+              <p class="detail-value text-block"><%= profile?.Detail || 'No details added yet.' %></p>
+            </div>
+          </div>
+        </div>
+        <p class="user-email"><%= user?.email || 'member@community.com' %></p>
+      </div>
+
+      <!-- Back Arrow Header Button -->
+      <div class="back-navigation-container">
+        <a href="/home" class="back-arrow-link">
+          <span class="arrow-icon">←</span> Go Back
+        </a>
+      </div>
+
+      <nav class="dashboard-nav">
+        <button class="nav-card active" onclick="switchTab(event, 'posts')">
+          <span class="nav-icon">📝</span>
+          <div class="nav-text">
+            <span class="nav-title">My Posts</span>
+            <span class="nav-desc">History & content feed</span>
+          </div>
+        </button>
+
+        <button class="nav-card" onclick="switchTab(event, 'messager')">
+          <span class="nav-icon">💬</span>
+          <div class="nav-text">
+            <span class="nav-title">Messenger</span>
+            <span class="nav-desc">Direct chats & updates</span>
+          </div>
+        </button>
+
+        <button class="nav-card" onclick="switchTab(event, 'friends')">
+          <span class="nav-icon">👥</span>
+          <div class="nav-text">
+            <span class="nav-title">Finding friend</span>
+            <span class="nav-desc">View friends & connections</span>
+          </div>
+        </button>
+
+        <button class="nav-card" onclick="switchTab(event, 'you')">
+          <span class="nav-icon">👥</span>
+          <div class="nav-text">
+            <span class="nav-title">More of you</span>
+            <span class="nav-desc">Add something about you</span>
+          </div>
+        </button>
+          <button class="nav-card" onclick="switchTab(event, 'knowledge')">
+          <span class="nav-icon">👥</span>
+          <div class="nav-text">
+            <span class="nav-title">More of you</span>
+            <span class="nav-desc">Add something about you</span>
+          </div>
+        </button>
+
+        <button class="nav-card logout-card" onclick="logout()">
+          <span class="nav-icon">🚪</span>
+          <div class="nav-text">
+            <span class="nav-title">Sign Out</span>
+            <span class="nav-desc">Securely exit session</span>
+          </div>
+        </button>
+      </nav>
+    </aside>
+    
+    <!-- 2. Main Content Area (SCROLLABLE RIGHT FEED) -->
+    <main class="dashboard-main">
+      
+      <!-- Tab 1: My Posts -->
+      <div id="posts-tab" class="tab-content active">
+        <div class="tab-header">
+          <h2>My Posts</h2>
+          <p>Everything you've shared with the community so far.</p>
+        </div>
+
+        <div class="social-feed-stream">
+          <!-- Create Post Publisher Card -->
+          <div class="content-card create-post-box">
+            <div class="publisher-top-row">
+              <div class="mini-avatar"><%= profile?.emoji_char||'👤' %></div>
+              <input type="text" placeholder="What's on your mind, <%= user.username %>?" class="post-input-trigger" onclick="openPostModal()">
+            </div>
+            <div class="publisher-actions">
+              <button class="pub-action-btn" onclick="openPostModal()">
+                <span class="pub-icon">📸</span> Photo/Video
+              </button>
+              <button class="pub-action-btn" onclick="openPostModal()">
+                <span class="pub-icon">🏷️</span> Tag Squad
+              </button>
+              <button class="pub-action-btn submit-post-btn" onclick="openPostModal()">
+                Post
+              </button>
+            </div>
+          </div>
+          
+          <!-- Post Loop -->
+         <% if (posts && posts.length > 0) { %>
+    <% posts.forEach(post => { %>
+        <div class="content-card social-post">
+            <!-- User Bar + Action Dropdown Menu -->
+            <div class="post-user-bar">
+                <div class="user-info-group">
+                    <div class="mini-avatar"><%= profile?.emoji_char || '👤' %></div>
+                    <div class="user-bar-meta">
+                        <h4><%= user.username %></h4>
+                        <span><%= formatPostDate(post.created_at) %></span>
+                    </div>
+                </div>
+                
+                <!-- 3-Dots Action Menu Trigger -->
+                <div class="post-menu-container">
+                    <button class="post-menu-trigger" onclick="togglePostMenu(event, '<%= post.id %>')">⋮</button>
+                    <div id="menu-<%= post.id %>" class="post-dropdown-menu">
+                        <button onclick="openUpdateModal('<%= post.id %>', `<%= post.text %>`)">✏️ Edit</button>
+                        <form action="/post/delete/<%= post.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            <button type="submit" class="delete-btn">🗑️ Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Text Content -->
+            <div class="post-text-content">
+                <p><%= post.text %></p>
+            </div>
+            
+            <!-- Multi-Image Grid Layout -->
+            <% if (post.pic) { %>
+                <% 
+                    let images = [];
+                    try {
+                        images = JSON.parse(post.pic);
+                    } catch (e) {
+                        images = post.pic ? [post.pic] : [];
+                    }
+                %>
+                <% if (images.length > 0) { %>
+                    <div class="post-gallery grid-<%= images.length > 5 ? 5 : images.length %>">
+                        <% images.forEach(singlePic => { %>
+                            <img src="/images/<%= singlePic %>" alt="Post Image" class="gallery-img">
+                        <% }) %>
+                    </div>
+                <% } %>
+            <% } %> 
+                
+            <!-- Interaction Zone -->
+            <div class="post-interaction-zone">
+                <div class="engagement-stats">
+                    <span class="likes-count">👍 56 likes</span>
+                    <span class="comments-count">48 comments</span>
+                </div>
+                <div class="post-actions">
+                    <button class="feed-action-btn">Like</button>
+                    <button class="feed-action-btn" onclick="toggleCommentBox('<%= post.id %>')">Comment</button>
+                    <button class="feed-action-btn">Share</button>
+                </div>
+            </div>
+
+            <!-- 💬 REAL-TIME COMMENTS CONTAINER -->
+            <div id="comments-post-<%= post.id %>" class="comments-section-wrapper" style="margin-top: 10px;">
+                <div class="comments-list">
+                    <!-- Dynamic live comments render here -->
+                </div>
+                <div class="comment-input-inline" style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input 
+                        type="text" 
+                        placeholder="Write a comment..." 
+                        style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ccc;"
+                        onkeypress="if(event.key === 'Enter') sendWsComment('<%= post.id %>', this)"
+                    >
+                    <button 
+                        type="button" 
+                        style="padding: 8px 16px; border-radius: 8px; background: #3b82f6; color: white; border: none; cursor: pointer;"
+                        onclick="sendWsComment('<%= post.id %>', this.previousElementSibling)"
+                    >
+                        Post
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    <% }) %>
+<% } else { %>
+    <p>No posts available yet. Be the first to post something!</p>
+<% } %>
+        </div>
+
+      <!-- Tab 2: Messenger -->
+      <div id="messager-tab" class="tab-content">
+        <div class="tab-header">
+          <h2>Messenger</h2>
+          <p>Real-time updates and ongoing conversation threads.</p>
+        </div>
+
+        <div class="content-card chat-wrapper">
+          <div class="chat-thread unread" onclick="alert('Opening conversation thread...')">
+            <div class="chat-avatar">✨<span class="status-dot online"></span></div>
+            <div class="chat-info">
+              <div class="chat-row-top">
+                <h4>Alex Rivera</h4>
+                <span class="chat-timestamp">5m ago</span>
+              </div>
+              <p class="chat-preview">Are we still pushing the new platform components active tonight?</p>
+            </div>
+          </div>
+
+          <div class="chat-thread" onclick="alert('Opening conversation thread...')">
+            <div class="chat-avatar">🛹<span class="status-dot online"></span></div>
+            <div class="chat-info">
+              <div class="chat-row-top">
+                <h4>Jordan Lee</h4>
+                <span class="chat-timestamp">2h ago</span>
+              </div>
+              <p class="chat-preview">Dropped a file inside the sync group channel. Check it out when free.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="friends-tab" class="tab-content">
+        <div class="tab-header">
+          <h2>Squad Hub</h2>
+          <p>Your connections and active community mutuals.</p>
+        </div>
+        <%- include('friend') %>
+      </div>
+
+      <!-- Tab 4: More of You -->
+      <div id="you-tab" class="tab-content">
+        <div class="tab-header">
+          <h2>About you</h2>
+          <p>Please add something about yourself</p>
+        </div>
+        <%- include('you') %>
+      </div>
+       <div id="knowledge-tab" class="tab-content">
+        <div class="tab-header">
+          <h2>Share your idea with discover</h2>
+          <p>Your ideas are worth for people</p>
+        </div>
+        <%- include('knowledge',{ Dipslay: Dipslay})  %>
+      </div>
+    </main>
+  </div>
+
+  <!-- Component Module 1: Create Post Modal Overlay -->
+  <div id="postModal" class="modal-overlay" onclick="closePostModalOnOverlay(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Create Post</h3>
+        <button type="button" class="close-modal-btn" onclick="closePostModal()">✕</button>
+      </div>
+      
+      <form action="/account" method="POST" enctype="multipart/form-data" id="postForm">
+        <div class="modal-user-row">
+          <div class="mini-avatar"><%= user.username.charAt(0).toUpperCase() %></div>
+          <div class="modal-user-info">
+            <h4><%= user.username %></h4>
+            <span class="privacy-badge">👥 Friends</span>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <textarea 
+            name="text" 
+            placeholder="What's on your mind, <%= user.username %>?" 
+            rows="5" 
+            required
+          ></textarea>
+          
+          <div id="mediaPreviewContainer" class="media-preview-container" style="display: none;">
+            <button type="button" class="remove-media-btn" onclick="clearMediaSelection()">✕</button>
+
+            <!-- Layout Picker Toolbar -->
+            <div id="layoutSelectorBar" class="layout-selector-bar" style="display: none;">
+              <span class="layout-label">Layout Style:</span>
+              <div class="layout-options">
+                <label class="layout-option">
+                  <input type="radio" name="layoutStyle" value="grid" checked onchange="changeLayout('grid')">
+                  <span class="layout-btn" title="Equal Grid">▦ Grid</span>
+                </label>
+
+                <label class="layout-option">
+                  <input type="radio" name="layoutStyle" value="hero" onchange="changeLayout('hero')">
+                  <span class="layout-btn" title="Hero + Details">◧ Feature</span>
+                </label>
+
+                <label class="layout-option">
+                  <input type="radio" name="layoutStyle" value="split" onchange="changeLayout('split')">
+                  <span class="layout-btn" title="Side-by-Side">❚❚ Split</span>
+                </label>
+
+                <label class="layout-option">
+                  <input type="radio" name="layoutStyle" value="carousel" onchange="changeLayout('carousel')">
+                  <span class="layout-btn" title="Swipeable Cards">⇄ Carousel</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="previewContent" class="preview-grid-layout layout-grid"></div>
+          </div>
+
+          <div class="image-upload-zone" id="uploadZone">
+            <label for="mediaUpload" class="upload-label">
+              <span class="upload-title">📸 Add photos or videos</span>
+              <span class="upload-subtitle">Supports JPG, PNG, MP4, WebM up to 50MB</span>
+              <input 
+                type="file" 
+                id="mediaUpload" 
+                name="pic" 
+                multiple 
+                accept="image/*,video/*" 
+                onchange="handleMediaSelect(event)"
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="modal-submit-btn">Post to Feed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Component Module 2: Update Post Modal Overlay -->
+  <div id="updatePostModal" class="modal-overlay" onclick="closeUpdateModalOnOverlay(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Edit Post</h3>
+        <button type="button" class="close-modal-btn" onclick="closeUpdateModal()">✕</button>
+      </div>
+      
+      <form action="/post/update" method="POST" enctype="multipart/form-data" id="updatePostForm">
+        <div class="modal-user-row">
+          <div class="mini-avatar"><%= user.username.charAt(0).toUpperCase() %></div>
+          <div class="modal-user-info">
+            <h4><%= user.username %></h4>
+            <span class="privacy-badge">👥 Friends</span>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <textarea 
+            id="updateTextarea"
+            name="text" 
+            placeholder="Update your post..." 
+            rows="5" 
+            required
+          ></textarea>
+          
+          <div id="updateMediaPreviewContainer" class="media-preview-container" style="display: none;">
+            <button type="button" class="remove-media-btn" onclick="clearUpdateMediaSelection()">✕</button>
+            <div id="updatePreviewContent" class="preview-grid-layout"></div>
+          </div>
+
+          <div class="image-upload-zone" id="updateUploadZone">
+            <label for="updateMediaUpload" class="upload-label">
+              <span class="upload-title">📸 Replace photos or videos</span>
+              <span class="upload-subtitle">Uploading files will overwrite older images</span>
+              <input 
+                type="file" 
+                id="updateMediaUpload" 
+                name="pic" 
+                multiple 
+                accept="image/*,video/*" 
+                onchange="handleUpdateMediaSelect(event)"
+              >
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="modal-submit-btn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- UI Layout Control Scripts -->
+  <script>
+    
+    function switchTab(event, tabId) {
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const activeTab = document.getElementById(tabId + '-tab');
+      if (activeTab) activeTab.classList.add('active');
+
+      const buttons = document.querySelectorAll('.nav-card');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openPostModal() {
+      const modal = document.getElementById('postModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePostModal() {
+      const modal = document.getElementById('postModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      clearMediaSelection();
+      document.getElementById('postForm').reset();
+    }
+
+    function closePostModalOnOverlay(event) {
+      if (event.target.id === 'postModal') closePostModal();
+    }
+
+    function logout() {
+      if(confirm('Are you sure you want to sign out?')) {
+        window.location.href = '/logout';
+      }
+    }
+
+    function changeLayout(selectedLayout) {
+      const previewContent = document.getElementById('previewContent');
+      previewContent.className = `preview-grid-layout layout-${selectedLayout}`;
+    }
+
+    function handleMediaSelect(event) {
+      const files = event.target.files;
+      const layoutBar = document.getElementById('layoutSelectorBar');
+      const previewContainer = document.getElementById('mediaPreviewContainer');
+      const previewContent = document.getElementById('previewContent');
+      const uploadZone = document.getElementById('uploadZone');
+
+      if (!files || files.length === 0) return;
+
+      if (files.length > 1) {
+        layoutBar.style.display = 'flex'; 
+      } else {
+        layoutBar.style.display = 'none'; 
+      }
+
+      previewContent.innerHTML = ''; 
+      previewContent.className = `preview-grid-layout grid-${files.length > 5 ? 5 : files.length}`;
+
+      Array.from(files).forEach(file => {
+        const fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'preview-item';
+            previewContent.appendChild(img);
+          } else if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = e.target.result;
+            video.className = 'preview-item';
+            video.controls = true;
+            video.muted = true;
+            previewContent.appendChild(video);
+          }
+        };
+        fileReader.readAsDataURL(file);
+      });
+
+      previewContainer.style.display = 'block';
+      uploadZone.style.display = 'none';
+    }
+
+    function clearMediaSelection() {
+      const fileInput = document.getElementById('mediaUpload');
+      const previewContainer = document.getElementById('mediaPreviewContainer');
+      const previewContent = document.getElementById('previewContent');
+      const uploadZone = document.getElementById('uploadZone');
+      const layoutBar = document.getElementById('layoutSelectorBar');
+
+      fileInput.value = ''; 
+      previewContent.innerHTML = '';
+      previewContainer.style.display = 'none';
+      if (layoutBar) layoutBar.style.display = 'none';
+      uploadZone.style.display = 'block';
+    }
+
+    /* --- UPDATE / DELETE LOGIC --- */
+    function togglePostMenu(event, postId) {
+      event.stopPropagation();
+      document.querySelectorAll('.post-dropdown-menu').forEach(menu => {
+        if(menu.id !== 'menu-' + postId) menu.style.display = 'none';
+      });
+      
+      const targetMenu = document.getElementById('menu-' + postId);
+      targetMenu.style.display = targetMenu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.post-dropdown-menu').forEach(menu => menu.style.display = 'none');
+    });
+
+    function openUpdateModal(id, currentText) {
+      const modal = document.getElementById('updatePostModal');
+      const form = document.getElementById('updatePostForm');
+      const textarea = document.getElementById('updateTextarea');
+      
+      form.action = `/post/update/${id}`;
+      textarea.value = currentText;
+      
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeUpdateModal() {
+      const modal = document.getElementById('updatePostModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      clearUpdateMediaSelection();
+    }
+
+    function closeUpdateModalOnOverlay(event) {
+      if (event.target.id === 'updatePostModal') closeUpdateModal();
+    }
+
+    function handleUpdateMediaSelect(event) {
+      const files = event.target.files;
+      const previewContainer = document.getElementById('updateMediaPreviewContainer');
+      const previewContent = document.getElementById('updatePreviewContent');
+      const uploadZone = document.getElementById('updateUploadZone');
+
+      if (!files || files.length === 0) return;
+      previewContent.innerHTML = ''; 
+      previewContent.className = `preview-grid-layout grid-${files.length > 5 ? 5 : files.length}`;
+
+      Array.from(files).forEach(file => {
+        const fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'preview-item';
+            previewContent.appendChild(img);
+          } else if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = e.target.result;
+            video.className = 'preview-item';
+            video.controls = true;
+            previewContent.appendChild(video);
+          }
+        };
+        fileReader.readAsDataURL(file);
+      });
+
+      previewContainer.style.display = 'block';
+      uploadZone.style.display = 'none';
+    }
+
+    function clearUpdateMediaSelection() {
+      const fileInput = document.getElementById('updateMediaUpload');
+      const previewContainer = document.getElementById('updateMediaPreviewContainer');
+      const previewContent = document.getElementById('updatePreviewContent');
+      const uploadZone = document.getElementById('updateUploadZone');
+
+      fileInput.value = ''; 
+      previewContent.innerHTML = '';
+      previewContainer.style.display = 'none';
+      uploadZone.style.display = 'block';
+    }
+  </script>
+
+  <!-- Global Dashboard Design Styles -->
+  <style>
+    :root {
+      --bg-app: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: #e2e8f0;
+      --accent-color: #4f46e5;
+      --accent-hover: #4338ca;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: var(--text-primary);
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 32px;
+      max-width: 1120px;
+      margin: 40px auto;
+      padding: 0 24px;
+      align-items: start;
+    }
+
+    .dashboard-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: sticky;
+      top: 40px;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    .dashboard-sidebar::-webkit-scrollbar { display: none; }
+    .dashboard-sidebar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .user-profile-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 28px; text-align: center; box-shadow: var(--shadow-sm); }
+    .avatar-container { width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent-color), #818cf8); color: white; font-size: 24px; font-weight: 700; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .user-profile-card h3 { margin: 0 0 4px 0; font-size: 1.15rem; font-weight: 700; }
+    .user-email { margin: 12px 0 0 0; font-size: 0.85rem; color: var(--text-secondary); }
+
+    .dashboard-nav { display: flex; flex-direction: column; gap: 12px; }
+    .nav-card { display: flex; align-items: center; gap: 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px 20px; text-align: left; cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease; font-family: inherit; }
+    .nav-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+    .nav-card.active { border-color: var(--accent-color); box-shadow: 0 0 0 1px var(--accent-color), var(--shadow-md); }
+    .nav-icon { font-size: 1.35rem; }
+    .nav-text { display: flex; flex-direction: column; }
+    .nav-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+    .nav-desc { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+    .logout-card { margin-top: 12px; }
+    .logout-card:hover { border-color: #fee2e2; }
+    .logout-card .nav-title { color: #dc2626; }
+
+    .dashboard-main { display: flex; flex-direction: column; gap: 24px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: flex; flex-direction: column; gap: 28px; }
+    .tab-header h2 { margin: 0 0 6px 0; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px; }
+    .tab-header p { margin: 0; font-size: 0.95rem; color: var(--text-secondary); }
+    .content-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); }
+
+    .create-post-box { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+    .publisher-top-row { display: flex; align-items: center; gap: 12px; }
+    .post-input-trigger { flex-grow: 1; background: #f1f5f9; border: 1px solid var(--border-color); border-radius: 24px; padding: 12px 20px; font-size: 0.95rem; color: var(--text-primary); cursor: pointer; outline: none; transition: background 0.2s; }
+    .post-input-trigger:hover { background: #e2e8f0; }
+    .publisher-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+    .pub-action-btn { background: transparent; border: none; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; transition: background 0.2s; }
+    .pub-action-btn:hover { background: #f8fafc; color: var(--text-primary); }
+    .submit-post-btn { background: var(--accent-color); color: white; padding: 6px 20px; border-radius: 20px; }
+    .submit-post-btn:hover { background: var(--accent-hover); color: white; }
+
+    .social-feed-stream { display: flex; flex-direction: column; gap: 24px; }
+    .social-post { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .post-user-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #f1f5f9; }
+    .user-info-group { display: flex; align-items: center; gap: 12px; }
+    .mini-avatar { width: 48px; height: 48px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+    .user-bar-meta h4 { margin: 0; font-size: 0.9rem; font-weight: 700; }
+    .user-bar-meta span { font-size: 0.75rem; color: var(--text-secondary); }
+    
+    .post-menu-container { position: relative; }
+    .post-menu-trigger { background: transparent; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-secondary); padding: 4px 8px; border-radius: 50%; }
+    .post-dropdown-menu { display: none; position: absolute; right: 0; top: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-md); z-index: 50; min-width: 120px; }
+    .post-dropdown-menu button { display: block; width: 100%; text-align: left; padding: 10px 16px; border: none; background: transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-primary); cursor: pointer; }
+    .post-dropdown-menu button.delete-btn { color: #dc2626; border-top: 1px solid #f1f5f9; }
+
+    .post-text-content { padding: 24px; font-size: 1rem; line-height: 1.5; color: var(--text-primary); }
+    .post-interaction-zone { padding: 20px 24px; }
+    .engagement-stats { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+    .post-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid transparent; gap: 8px; margin-top: 12px; }
+    .feed-action-btn { background: #f8fafc; border: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.85rem; font-weight: 700; padding: 10px; border-radius: var(--radius-md); cursor: pointer; text-align: center; transition: all 0.15s ease; }
+    .feed-action-btn:hover { background: #f1f5f9; color: var(--text-primary); border-color: #cbd5e1; }
+
+    /* Multi-Image Grid System Styles */
+    .post-gallery { display: grid; gap: 4px; width: 100%; background-color: #f8fafc; }
+    .grid-1 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 200px); }
+    .grid-5 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 150px); }
+    
+    .grid-5 .gallery-img:nth-child(1) { grid-column: span 3; grid-row: span 2; }
+    .grid-5 .gallery-img:nth-child(2) { grid-column: span 3; grid-row: span 2; }
+    .grid-5 .gallery-img:nth-child(3) { grid-column: span 2; }
+    .grid-5 .gallery-img:nth-child(4) { grid-column: span 2; }
+    .grid-5 .gallery-img:nth-child(5) { grid-column: span 2; }
+
+    .gallery-img { width: 100%; height: 350px; object-fit: cover; transition: filter 0.2s; }
+    .grid-4 .gallery-img, .grid-5 .gallery-img { height: 100%; }
+    .gallery-img:hover { filter: brightness(0.9); }
+
+    /* Overlay Layer Animations */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--bg-card); border-radius: var(--radius-lg);
+      width: 100%; max-width: 540px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      overflow: hidden;
+      animation: modalSlide 0.2s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border-color); }
+    .modal-header h3 { margin: 0; font-size: 1.1rem; }
+    .close-modal-btn { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-secondary); }
+    .modal-user-row { display: flex; align-items: center; gap: 12px; padding: 16px 24px; }
+    .modal-user-info h4 { margin: 0; font-size: 0.95rem; }
+    .privacy-badge { font-size: 0.75rem; color: var(--text-secondary); background: #f1f5f9; padding: 2px 8px; border-radius: 12px; }
+    .modal-body { padding: 0 24px 16px 24px; }
+    .modal-body textarea { width: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 1rem; color: var(--text-primary); box-sizing: border-box; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; }
+    .modal-submit-btn { background: var(--accent-color); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .modal-submit-btn:hover { background: var(--accent-hover); }
+
+    .media-preview-container { position: relative; margin-top: 12px; }
+    .remove-media-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; z-index: 10; }
+    .image-upload-zone { border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 24px; text-align: center; margin-top: 12px; cursor: pointer; }
+    .upload-label { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+    .upload-label input[type="file"] { display: none; }
+    .upload-title { font-weight: 600; font-size: 0.9rem; }
+    .upload-subtitle { font-size: 0.75rem; color: var(--text-secondary); }
+
+    .preview-item { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+    .layout-selector-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; }
+    .layout-label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+    .layout-options { display: flex; gap: 8px; }
+    .layout-option input { display: none; }
+    .layout-btn { font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; background: white; border: 1px solid var(--border-color); cursor: pointer; }
+    .layout-option input:checked + .layout-btn { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+  </style>
+</body>
+</html>

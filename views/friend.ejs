@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finding friend</title>
+</head>
+<body>
+ <div class="friends-column">
+  <% if (typeof allUsers !== 'undefined' && allUsers.length > 0) { %>
+      
+      <% for(let i = 0; i < allUsers.length; i++) { %>
+          <div class="content-card friend-row">
+            <div class="friend-profile">
+              <div class="friend-avatar">⚡</div>
+              <div class="friend-meta">
+                <h4><%= allUsers[i].username %></h4>
+                <p><%= allUsers[i].email %></p>
+              </div>
+            </div>
+            <button class="relationship-btn">Connect</button>
+          </div>
+      <% } %>
+
+  <% } else { %>
+      <p style="padding: 15px; color: #888;">No users available to display.</p>
+  <% } %>
+</div>
+       
+
+</body>
+</html>

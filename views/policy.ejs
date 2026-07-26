@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Policy & Terms - Creative Learning</title>
+    
+    <!-- Google Fonts for English & Khmer -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Battambang', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Language Switcher Styling */
+        .lang-switch-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .lang-btn-group {
+            display: inline-flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: var(--card-bg);
+            color: var(--primary-color);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header Styling */
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Policy Sections */
+        .policy-section {
+            margin-bottom: 32px;
+        }
+
+        .policy-section h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .policy-section p {
+            color: #334155;
+            margin-bottom: 12px;
+        }
+
+        .policy-section ul {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .policy-section li {
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Language Switcher Buttons -->
+        <div class="lang-switch-container">
+            <div class="lang-btn-group">
+                <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">English</button>
+                <button class="lang-btn" id="btn-km" onclick="setLanguage('km')">ភាសាខ្មែរ</button>
+            </div>
+        </div>
+
+        <!-- ENGLISH CONTENT -->
+        <div id="content-en">
+            <header>
+                <h1>Platform Community & Content Policy</h1>
+                <p class="subtitle">Last updated: July 2026 • Guidelines for a safe, educational, and creative space.</p>
+            </header>
+
+            <div class="policy-section">
+                <h2>1. Our Mission</h2>
+                <p>Our platform is dedicated to sharing knowledge, fostering creativity, and building an inclusive educational community. We encourage collaboration, constructive feedback, and lifelong learning.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>2. Acceptable Content Guidelines</h2>
+                <p>All shared content (videos, posts, comments, and creative works) must adhere to these standards:</p>
+                <ul>
+                    <li><strong>Educational & Creative Value:</strong> Content should inspire learning, skill development, artistic expression, or insightful discussions.</li>
+                    <li><strong>Respect Originality:</strong> Always credit original creators. Do not plagiarize or share copyrighted materials without authorization.</li>
+                    <li><strong>Constructive Engagement:</strong> Provide helpful, respectful feedback to peers and educators.</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>3. Prohibited Content & Behavior</h2>
+                <p>To keep our learning community safe, the following are strictly forbidden:</p>
+                <ul>
+                    <li>Hate speech, harassment, bullying, or discrimination based on race, gender, religion, or background.</li>
+                    <li>Misinformation, fake news, or misleading educational content.</li>
+                    <li>Sexually explicit, violent, or dangerous material.</li>
+                    <li>Spam, unauthorized advertisements, or self-promotion unrelated to learning.</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>4. Intellectual Property & Ownership</h2>
+                <p>You retain full ownership of the original creative works and educational material you share. However, by uploading content, you grant our platform a non-exclusive license to display and distribute your work to other learners within the community.</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>5. Enforcement & Reporting</h2>
+                <p>We review reported content regularly. Violations of this policy may result in content removal, account warnings, or permanent suspension from the platform.</p>
+            </div>
+
+            <footer>
+                &copy; 2026 Educational & Creative Learning Platform. All rights reserved.
+            </footer>
+        </div>
+
+        <!-- KHMER CONTENT (Hidden by default) -->
+        <div id="content-km" style="display: none;">
+            <header>
+                <h1>គោលការណ៍សហគមន៍ និងខ្លឹមសារវេទិកា</h1>
+                <p class="subtitle">ធ្វើបច្ចុប្បន្នភាពចុងក្រោយ៖ ខែកក្កដា ឆ្នាំ២០២៦ • គោលការណ៍ណែនាំសម្រាប់លំហសិក្សា និងគំនិតច្នៃប្រឌិតដែលមានសុវត្ថិភាព</p>
+            </header>
+
+            <div class="policy-section">
+                <h2>១. បេសកកម្មរបស់យើង</h2>
+                <p>វេទិការបស់យើងត្រូវបានបង្កើតឡើងដើម្បីចែករំលែកចំណេះដឹង លើកកម្ពស់គំនិតច្នៃប្រឌិត និងបង្កើតសហគមន៍អប់រំដែលបរិយាបន្ន។ យើងលើកទឹកចិត្តដល់កិច្ចសហប្រតិបត្តិការ ការផ្តល់មតិរិះគន់ដើម្បីស្ថាបនា និងការសិក្សាពេញមួយជីវិត។</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>២. គោលការណ៍ណែនាំខ្លឹមសារដែលអាចចែករំលែកបាន</h2>
+                <p>រាល់ខ្លឹមសារដែលបានចែករំលែក (វីដេអូ អត្ថបទ មតិយោបល់ និងស្នាដៃច្នៃប្រឌិត) ត្រូវតែអនុវត្តតាមស្តង់ដារដូចខាងក្រោម៖</p>
+                <ul>
+                    <li><strong>តម្លៃអប់រំ និងគំនិតច្នៃប្រឌិត៖</strong> ខ្លឹមសារควរបង្កើតបណ្ដុះគំនិតសិក្សា ការអភិវឌ្ឍជំនាញ ការបញ្ចេញមតិផ្នែកសិល្បៈ ឬការពិភាក្សាដែលមានប្រយោជន៍។</li>
+                    <li><strong>គោរពកម្មសិទ្ធិដើម៖</strong> តែងតែផ្តល់កិត្តិយសដល់ម្ចាស់ស្នាដៃដើម។ ហាមលួចចម្លង ឬចែករំលែកសម្ភារដែលមានរក្សាសិទ្ធិដោយគ្មានការអនុញ្ញាត។</li>
+                    <li><strong>ការចូលរួមប្រកបដោយការស្ថាបនា៖</strong> ផ្តល់មតិត្រឡប់ដែលមានប្រយោជន៍ និងការគោរពគ្នាទៅវិញទៅមកដល់មិត្តភក្តិ និងគ្រូបង្រៀន។</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>៣. ខ្លឹមសារ និងកាយវិការដែលត្រូវបានហាមឃាត់</h2>
+                <p>ដើម្បីរក្សាសុវត្ថិភាពសហគមន៍សិក្សារបស់យើង សកម្មភាពខាងក្រោមនេះត្រូវបានហាមឃាត់ដាច់ខាត៖</p>
+                <ul>
+                    <li>ការប្រើប្រាស់ពាក្យសម្ដីអាក្រក់ ការរំលោភបំពាន ការបំភិតបំភ័យ ឬការរើសអើងពូជសាសន៍ ភេទ សាសនា ឬប្រវត្តិរូប។</li>
+                    <li>ព័ត៌មានមិនពិត ឬខ្លឹមសារអប់រំដែលភាន់ច្រឡំ។</li>
+                    <li>រូបភាព ឬវីដេអូអាសអាភាស អំពើហិង្សា ឬសម្ភារដែលមានគ្រោះថ្នាក់។</li>
+                    <li>សាររំខាន (Spam) ការផ្សាយពាណិជ្ជកម្មគ្មានការអនុញ្ញាត ឬការផ្សព្វផ្សាយផ្ទាល់ខ្លួនដែលមិនពាក់ព័ន្ធនឹងការសិក្សា។</li>
+                </ul>
+            </div>
+
+            <div class="policy-section">
+                <h2>៤. កម្មសិទ្ធិបញ្ញា និងសិទ្ធិគ្រប់គ្រង</h2>
+                <p>អ្នកនៅតែរក្សាសិទ្ធិគ្រប់គ្រងពេញលេញលើស្នាដៃច្នៃប្រឌិត និងសម្ភារអប់រំដើមដែលអ្នកបានចែករំលែក។ ទោះជាយ៉ាងណាក៏ដោយ ដោយសារការបង្ហោះខ្លឹមសារ អ្នកផ្តល់សិទ្ធិឱ្យវេទិការបស់យើងក្នុងការបង្ហាញ និងចែកចាយស្នាដៃរបស់អ្នកទៅកាន់អ្នកសិក្សាផ្សេងទៀតនៅក្នុងសហគមន៍។</p>
+            </div>
+
+            <div class="policy-section">
+                <h2>៥. ការអនុវត្ត និងការរាយការណ៍</h2>
+                <p>យើងពិនិត្យមើលខ្លឹមសារដែលបានរាយការណ៍ជាទៀងទាត់។ ការរំលោភលើគោលការណ៍នេះអាចបណ្តាលឱ្យមានការលុបខ្លឹមសារ ការព្រមានគណនី ឬការផ្អាកគណនីជាអចិន្ត្រៃយ៍ពីវេទិកា។</p>
+            </div>
+
+            <footer>
+                &copy; ២០២៦ វេទិកាអប់រំ និងការសិក្សាប្រកបដោយគំនិតច្នៃប្រឌិត។ រក្សាសិទ្ធិគ្រប់យ៉ាង។
+            </footer>
+        </div>
+    </div>
+
+    <!-- JavaScript for Language Toggle Logic -->
+    <script>
+        function setLanguage(lang) {
+            const enContent = document.getElementById('content-en');
+            const kmContent = document.getElementById('content-km');
+            const btnEn = document.getElementById('btn-en');
+            const btnKm = document.getElementById('btn-km');
+
+            if (lang === 'km') {
+                enContent.style.display = 'none';
+                kmContent.style.display = 'block';
+                btnKm.classList.add('active');
+                btnEn.classList.remove('active');
+                document.documentElement.lang = 'km';
+            } else {
+                kmContent.style.display = 'none';
+                enContent.style.display = 'block';
+                btnEn.classList.add('active');
+                btnKm.classList.remove('active');
+                document.documentElement.lang = 'en';
+            }
+        }
+    </script>
+</body>
+</html>
