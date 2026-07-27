@@ -75,7 +75,7 @@
           </div>
         </button>
 
-        <button class="nav-card" onclick="switchTab(event, 'friends')">
+        <button class="nav-card" onclick="switchTab(event, 'friend')">
           <span class="nav-icon">👥</span>
           <div class="nav-text">
             <span class="nav-title">Finding friend</span>
@@ -236,7 +236,7 @@
           <h2>Messenger</h2>
           <p>Real-time updates and ongoing conversation threads.</p>
         </div>
-
+        <%- include('messager') %>
         <div class="content-card chat-wrapper">
           <div class="chat-thread unread" onclick="alert('Opening conversation thread...')">
             <div class="chat-avatar">✨<span class="status-dot online"></span></div>
@@ -276,14 +276,14 @@
           <h2>About you</h2>
           <p>Please add something about yourself</p>
         </div>
-        <%# include('you') %>
+        <%- include('you') %>
       </div>
        <div id="knowledge-tab" class="tab-content">
         <div class="tab-header">
           <h2>Share your idea with discover</h2>
           <p>Your ideas are worth for people</p>
         </div>
-        <%- include('knowledge',{ Dipslay: Dipslay})  %>
+        <%- include('knowledge')  %>
       </div>
     </main>
   </div>
