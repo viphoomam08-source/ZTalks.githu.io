@@ -1,11 +1,8 @@
 const mysql = require('mysql2');
 
-// Force TiDB fallback if process.env.DB_HOST is empty or explicitly set to localhost in production
-const hostEnv = process.env.DB_HOST;
-const dbHost = (hostEnv && hostEnv !== 'localhost' && hostEnv !== '127.0.0.1') 
-  ? hostEnv 
-  : 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
+const dbHost = process.env.DB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com';
 
+// Local MySQL (XAMPP/WAMP) doesn't support SSL, but TiDB Cloud strictly requires it.
 const isLocalhost = dbHost === 'localhost' || dbHost === '127.0.0.1';
 
 const pool = mysql.createPool({
@@ -15,6 +12,7 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'genz',
   port: Number(process.env.DB_PORT) || 4000,
   
+  // Disable SSL ONLY if connecting to local XAMPP/MySQL. Enable for TiDB Cloud.
   ssl: isLocalhost ? false : { minVersion: 'TLSv1.2', rejectUnauthorized: true },
 
   waitForConnections: true,
